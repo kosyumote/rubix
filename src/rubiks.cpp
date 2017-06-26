@@ -9,7 +9,6 @@
 #include <iostream>
 #include <stdlib.h>     
 #include <ctime>
-using namespace std;
 
 
 //global variables
@@ -29,7 +28,7 @@ void playagain(unsigned char key, int xmouse, int ymouse);
 //precondition: none
 //postcondition: awaits input, and will react by returning to cube or closing program
 
-void print(int x, int y, int z, string str);
+void print(int x, int y, int z, std::string str);
 //precondition: takes in values for where on screen and a string
 //postcondition: prints string to screen
 
@@ -2800,7 +2799,7 @@ void solvedDisplay(){
 }
 
 //default code for printing text
-void print(int x, int y, int z, string str)
+void print(int x, int y, int z, std::string str)
 {
 	//set the position of the text in the window using the x and y coordinates
 	glRasterPos2f(x, y);
