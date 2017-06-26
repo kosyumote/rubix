@@ -1,9 +1,3 @@
-//#include <Windows.h>
-
-// had to install the following package on Mint
-//
-//  libglew-dev  
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
@@ -24,15 +18,15 @@ struct sticker{//an array of 54 of these is made
 sticker pieces[54];//this represents all the pieces, that are later initilized to be in all positions 1-54, with colors also assigned
 
 
-void playagain(unsigned char key, int xmouse, int ymouse);
+void playagain(unsigned char key, int, int);
 //precondition: none
 //postcondition: awaits input, and will react by returning to cube or closing program
 
-void print(int x, int y, int z, std::string str);
+void print(int x, int y, std::string str);
 //precondition: takes in values for where on screen and a string
 //postcondition: prints string to screen
 
-void play(unsigned char key, int xmouse, int ymouse);
+void play(unsigned char key, int, int);
 //precondition: opengl window is open
 //postcondition: awaits input, and will react by calling the turn functions
 
@@ -151,7 +145,7 @@ int main(int argc, char** argv)
 
 
 
-void play(unsigned char key, int xmouse, int ymouse){
+void play(unsigned char key, int, int){  // the int's are to match the signature that glutKeyboardFunc expects - those are for the mouse coordinates, which we don't care about
 	
 	
 
@@ -2794,12 +2788,12 @@ int getRand() {
 
 void solvedDisplay(){
 	//display "SOLVED"
-	print(-.9, 0, 0, "SOLVED! Play Again? (Y/N)");
+	print(-.9, 0, "SOLVED! Play Again? (Y/N)");
 	glutKeyboardFunc(playagain);
 }
 
 //default code for printing text
-void print(int x, int y, int z, std::string str)
+void print(int x, int y, std::string str)
 {
 	//set the position of the text in the window using the x and y coordinates
 	glRasterPos2f(x, y);
@@ -2815,7 +2809,7 @@ void print(int x, int y, int z, std::string str)
 };
 
 
-void playagain(unsigned char key, int xmouse, int ymouse){
+void playagain(unsigned char key, int, int){ // the int's are to match the signature that glutKeyboardFunc expects - those are for the mouse coordinates, which we don't care about
 	//same idea as with the original play function, but just two options
 	if (key == 'y'){
 		glutHideWindow();
