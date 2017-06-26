@@ -1,6 +1,11 @@
-#include <Windows.h>
-#include <glew.h>
-#include <freeglut.h>
+//#include <Windows.h>
+
+// had to install the following package on Mint
+//
+//  libglew-dev  
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #include <iostream>
 #include <stdlib.h>     
 #include <ctime>
@@ -24,7 +29,7 @@ void playagain(unsigned char key, int xmouse, int ymouse);
 //precondition: none
 //postcondition: awaits input, and will react by returning to cube or closing program
 
-void print(int x, int y, int z, char *string);
+void print(int x, int y, int z, string str);
 //precondition: takes in values for where on screen and a string
 //postcondition: prints string to screen
 
@@ -2795,17 +2800,17 @@ void solvedDisplay(){
 }
 
 //default code for printing text
-void print(int x, int y, int z, char *string)
+void print(int x, int y, int z, string str)
 {
 	//set the position of the text in the window using the x and y coordinates
 	glRasterPos2f(x, y);
 	//get the length of the string to display
-	int len = (int)strlen(string);
+	int len = (int) str.size();
 
 	//loop to display character by character
 	for (int i = 0; i < len; i++)
 	{
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
 	}
 	glFlush();
 };
