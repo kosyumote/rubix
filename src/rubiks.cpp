@@ -1,9 +1,28 @@
+#include <iostream>
 #include <string>
-//#include <stdlib.h>     
-#include <ctime>
+//#include <ctime>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+
+// blatantly copied code :) - does some setup for resizing the window but keeping the perspective the same
+// from https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html
+
+void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+   // Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+ 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+ 
+   // Set the aspect ratio of the clipping volume to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();             // Reset
+   // Enable perspective projection with fovy, aspect, zNear and zFar
+   gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+}
+
 
 
 //global variables
@@ -109,6 +128,18 @@ int main(int argc, char** argv)
 	pieces[i].z = 1.0;	
     }
 
+
+/*    //debugging
+    for (int i = 0; i < 54; ++i)
+    {
+	pieces[i].x = (float)(i) / 54.0f;
+	std::cout << i << ' ' << (float)(i) / 54.0f << std::endl;
+	pieces[i].y = 1.0f;
+	pieces[i].z = 1.0f;
+	}*/
+
+
+    
     //code needed to set up window
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
@@ -119,14 +150,19 @@ int main(int argc, char** argv)
     glutCreateWindow("Rubix");
 
     
-    glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.3f, 1.0f); // dark blue bg
+    glClearDepth(1.0f);                   // Set background depth to farthest
+    glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+    glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+    glShadeModel(GL_SMOOTH);   // Enable smooth shading
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+    glutReshapeFunc(reshape); // reshape callback
     
     //code to go to function that takes in input
     glutKeyboardFunc(play);
     
     //display function
     glutDisplayFunc(display);
-
 	
     //code needed to make the code go on until told to stop
     glutMainLoop();
@@ -255,13 +291,116 @@ void play(unsigned char key, int, int){  // the int's are to match the signature
 
 void display(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(-1.5f, -1.5f, -7.0f);
+    
+
+    for(int i = 0; i < 9; ++i)
+    {
+	int j;
+	for(j = 0; j < 54; j++) // whoops this is a bit bad - didn't realize the way you had the pieces - won't redo it dince this is just the beginning part - we'll redo the stickers soon
+	{
+	    if(pieces[j].position == i + 1)
+	    {
+		break;
+	    }
+	}
+	
+	glColor3f(pieces[j].x, pieces[j].y, pieces[j].z);
+	
+	glBegin(GL_QUADS);
+	glVertex3f((i / 3) / 3.0f,               1.0f, (i % 3) / 3.0f              );
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, 1.0f, (i % 3) / 3.0f              );
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, 1.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glVertex3f((i / 3) / 3.0f,               1.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glEnd();
+
+	glColor3f(0.0, 0.0, 0.0);
+	
+	glBegin(GL_LINE_LOOP);
+	glVertex3f((i / 3) / 3.0f,               1.0f, (i % 3) / 3.0f              );
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, 1.0f, (i % 3) / 3.0f              );
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, 1.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glVertex3f((i / 3) / 3.0f,               1.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glEnd();
+    }
+
+    for(int i = 0; i < 9; ++i)
+    {
+	int j;
+	for(j = 0; j < 54; j++) // whoops this is a bit bad - didn't realize the way you had the pieces - won't redo it dince this is just the beginning part - we'll redo the stickers soon
+	{
+	    if(pieces[j].position == 18 - i)
+	    {
+		break;
+	    }
+	}
+	
+	glColor3f(pieces[j].x, pieces[j].y, pieces[j].z);
+	
+	glBegin(GL_QUADS);
+	glVertex3f((i / 3) / 3.0f,               (i % 3) / 3.0f,               1.0f);
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f,               1.0f);
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f + 1.0f / 3.0f, 1.0f);
+	glVertex3f((i / 3) / 3.0f,               (i % 3) / 3.0f + 1.0f / 3.0f, 1.0f);
+	glEnd();
+
+
+	glColor3f(0.0, 0.0, 0.0);
+	
+	glBegin(GL_LINE_LOOP);
+	glVertex3f((i / 3) / 3.0f,               (i % 3) / 3.0f,               1.0f);
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f,               1.0f);
+	glVertex3f((i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f + 1.0f / 3.0f, 1.0f);
+	glVertex3f((i / 3) / 3.0f,               (i % 3) / 3.0f + 1.0f / 3.0f, 1.0f);
+	glEnd();	
+    }
+
+    for(int i = 0; i < 9; ++i)
+    {
+	int j;
+	for(j = 0; j < 54; j++) // whoops this is a bit bad - didn't realize the way you had the pieces - won't redo it dince this is just the beginning part - we'll redo the stickers soon
+	{
+	    if(pieces[j].position == i + 19)
+	    {
+		break;
+	    }
+	}
+	
+	glColor3f(pieces[j].x, pieces[j].y, pieces[j].z);
+	
+	glBegin(GL_QUADS);
+	glVertex3f(1.0f, (i / 3) / 3.0f,               (i % 3) / 3.0f              );
+	glVertex3f(1.0f, (i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f              );
+	glVertex3f(1.0f, (i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glVertex3f(1.0f, (i / 3) / 3.0f,               (i % 3) / 3.0f + 1.0f / 3.0f);
+	glEnd();
+
+
+	glColor3f(0.0, 0.0, 0.0);
+	
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(1.0f, (i / 3) / 3.0f,               (i % 3) / 3.0f              );
+	glVertex3f(1.0f, (i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f              );
+	glVertex3f(1.0f, (i / 3) / 3.0f + 1.0f / 3.0f, (i % 3) / 3.0f + 1.0f / 3.0f);
+	glVertex3f(1.0f, (i / 3) / 3.0f,               (i % 3) / 3.0f + 1.0f / 3.0f);
+	glEnd();	
+    }
+    
+
+    glFlush();
+    return;
+
+
+   
     //SUPER EXTENSIVE CODE THAT DISPLAYS EVERYTHING - SIMPLY BASED ON DRAWING SHAPES AND HAVING COORDINATES FOR THE ENDS
 
     for (int i = 0; i < 54; i++){
 
 	if (pieces[i].position == 1){
 
-	    glBegin(GL_QUADS);              // Each set of 4 vertices form a quad
+	                 // Each set of 4 vertices form a quad
 	    glColor3f(pieces[i].x, pieces[i].y, pieces[i].z);
 	    glVertex2f(0.1, 0.7);			//17
 	    glVertex2f(0.3, 0.7);			//18
@@ -596,7 +735,9 @@ void display(){
 		
     }
 
-    //insert lines between pieces
+
+
+//insert lines between pieces
 
     //first 4 are front side
     glLineWidth(4.0);

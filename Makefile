@@ -4,7 +4,7 @@ build=build/
 files=$(src)rubiks.cpp
 
 flags=-O2 -g -Wall -Wextra -Werror
-ldflags=-lGL -lGLEW -lglut
+ldflags=-lGL -lGLEW -lglut -lGLU
 
 .PHONY: all clean
 
